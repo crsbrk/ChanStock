@@ -134,3 +134,20 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR,'ChanStock/static'),
 
 ]
+
+# Media Folders settings
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
+# Messages
+from django.contrib.messages import constants as messages
+MESSAGE_TAGS = {
+    messages.ERROR: 'danger'
+}
+
+
+
+try:
+    from .local_settings import *
+except ImportError:
+    pass
