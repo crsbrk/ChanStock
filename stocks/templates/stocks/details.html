@@ -691,6 +691,10 @@ Highcharts.getJSON('http://localhost:8000/media/aapl-ohlcv.json', function (data
     // split the data set into ohlc and volume
     var ohlc = [],
         volume = [],
+        topArrow = [],
+        bottomArrow = [],
+        straitLine = [],
+        straitBoldLine = [],
         dataLength = data.length,
         i = 0;
 
@@ -707,6 +711,19 @@ Highcharts.getJSON('http://localhost:8000/media/aapl-ohlcv.json', function (data
             data[i][0], // the date
             data[i][6] // the volume
         ]);
+
+        if(data[i][9] == 1){
+            topArrow.push([data[i][0],data[i][2]]);
+        } 
+        else if (data[i][9] == -1){
+            bottomArrow.push([data[i][0],data[i][3]]);
+          
+        }
+        
+       /* straitLine.push([
+            data[i][0],
+            data[i][9] // the flag for drawing lines 
+        ]);*/
     }
 
     Highcharts.stockChart('container', {
@@ -803,6 +820,24 @@ Highcharts.getJSON('http://localhost:8000/media/aapl-ohlcv.json', function (data
             name: '{{stock.stock_name}}交易量',
             data: volume,
             yAxis: 1
+        },{
+          type: 'scatter',
+          name: '顶',
+          data: topArrow,
+          color:'#FF0000',
+          marker: {
+            radius: 4,
+            symbol: 'triangle-down'
+          }
+          
+        },{
+          type: 'scatter',
+          name: '底',
+          data: bottomArrow,
+          marker: {
+            radius: 4,
+            symbol: 'triangle'
+          }
         }],
         responsive: {
             rules: [{

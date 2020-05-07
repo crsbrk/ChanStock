@@ -24,7 +24,7 @@ def details(request, id):
     
     stock_k_one_data = getStockOneMinute(id)
     json_data=json.dumps(stock_k_one_data,ensure_ascii=False)
-    print(json_data)
+    #print(json_data)
 
 
 
@@ -42,7 +42,7 @@ def about(request):
 
 
 def getStockOneMinute(stock_id):
-    sql ='SELECT * FROM kbars_1_'+stock_id+'  LIMIT 0,100;'
+    sql ='SELECT * FROM kbars_1_'+stock_id+'  ;'
     print(sql)
     db = pymysql.connect('localhost','root','root','chan_stock')
     cursor = db.cursor()
