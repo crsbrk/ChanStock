@@ -570,6 +570,88 @@ li.highcharts-active {
       </ul>
     </div>
   </div>
+
+  <button id="btn1" onclick="get1()">1min</button>  
+  <button id="btn6" onclick="get5()">5min</button>  
+  <button id="btn2" onclick="get30()">30min</button>  
+  <button id="btn3" onclick="getDay()">day</button>  
+  <button id="btn4" onclick="getWeek()">week</button>
+  <button id="btn5" onclick="getMonth()">month</button>
+
+<textarea id ='ask'></textarea>
+<script type="text/javascript">
+		function get1(){
+
+      $.ajax({
+        type:"POST",
+        url:"", 		
+        data:{timer:'one'},
+        success:function(result){$("#ask").val(result);}
+});
+$('#container').highcharts().redraw();
+
+    }
+
+
+    function get5(){
+
+      $.ajax({
+        type:"POST",
+        url:"", 		
+        data:{timer:'five'},
+        success:function(result){
+          $("#allBody").html(result);//刷新整个body页面的html
+
+        }
+});
+console.log('{{timer}}')
+
+
+
+    }
+
+
+    function get30(){
+      $.ajax({
+        type:"POST",
+        url:"", 		
+        data:{timer:'thirty'},
+        success:function(result){$("#ask").html(result);}
+});
+$('#container').highcharts().redraw();
+    }
+    function getDay(){
+      $.ajax({
+        type:"POST",
+        url:"", 		
+        data:{timer:'day'},
+        success:function(result){$("#ask").html(result);}
+});
+$('#container').highcharts().redraw();
+    }
+    function getWeek(){
+      $.ajax({
+        type:"POST",
+        url:"", 		
+        data:{timer:'week'},
+        success:function(result){$("#ask").html(result);}
+});
+$('#container').highcharts().redraw();
+    }
+    function getMonth(){
+      $.ajax({
+        type:"POST",
+        url:"", 		
+        data:{timer:'month'},
+        success:function(result){$("#ask").html(result);}
+});
+$('#container').highcharts().redraw();
+    }
+    
+
+	</script>
+
+
   <div id="container" class="chart"></div>
 </div>
 
@@ -715,10 +797,23 @@ Highcharts.getJSON('http://localhost:8000/media/aapl-ohlcv.json', function (data
         if(data[i][9] == 1){
             topArrow.push([data[i][0],data[i][2]]);
         } 
-        else if (data[i][9] == -1){
+        if (data[i][9] == -1){
             bottomArrow.push([data[i][0],data[i][3]]);
           
         }
+        if (data[i][9]==2 ){
+          straitLine.push([data[i][0],data[i][2]])
+        }
+        if (data[i][9]==-2 ){
+          straitLine.push([data[i][0],data[i][3]])
+        }
+        if (data[i][9]==3 ){
+          straitBoldLine.push([data[i][0],data[i][2]])
+        }
+        if (data[i][9]==-3 ){
+          straitBoldLine.push([data[i][0],data[i][3]])
+        }
+        
         
        /* straitLine.push([
             data[i][0],
@@ -838,6 +933,16 @@ Highcharts.getJSON('http://localhost:8000/media/aapl-ohlcv.json', function (data
             radius: 4,
             symbol: 'triangle'
           }
+        },{
+          type: 'line',
+          name: '笔结构',
+          data: straitLine,
+
+        },{
+          type: 'line',
+          name: '段结构',
+          data: straitBoldLine,
+          lineWidth: 4,
         }],
         responsive: {
             rules: [{

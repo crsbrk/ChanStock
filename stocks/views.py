@@ -4,6 +4,10 @@ from .models import Stocks
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 import pymysql,json
 
+from django.views.decorators.csrf import csrf_exempt
+
+
+
 def index(request):
   
     stocks = Stocks.objects.all()
@@ -14,15 +18,22 @@ def index(request):
     context = {
          'title':'缠论',
          'stocks':listings
-
+          
     }
 
     return render(request, 'stocks/index.html', context)
 
+@csrf_exempt
 def details(request, id):
     stock = Stocks.objects.get(stock_id=id)
     
-    stock_k_one_data = getStockOneMinute(id)
+    timer='D'
+    if request.method == "POST":
+        timer = request.POST.get('timer')
+    
+    print("timer is %s",timer)
+
+    stock_k_one_data = getStockOneMinute(id, timer)
     json_data=json.dumps(stock_k_one_data,ensure_ascii=False)
     #print(json_data)
 
@@ -31,7 +42,9 @@ def details(request, id):
 
     context = {
         'stock': stock,
-        'stock_k_one_json': json_data
+        'stock_k_one_json': json_data,
+        'timer':timer
+
     }
 
     return render(request, 'stocks/details.html', context)
@@ -41,8 +54,22 @@ def about(request):
     return HttpResponse("缠论")
 
 
-def getStockOneMinute(stock_id):
-    sql ='SELECT * FROM kbars_1_'+stock_id+'  ;'
+def getStockOneMinute(stock_id,timer):
+    table_name ='1'
+    if timer == 'one':
+        table_name = '1'
+    if timer == 'thirty':
+        table_name = '30'
+    if timer == 'day':
+        table_name = 'D'
+    if timer == 'month':
+        table_name = 'M'
+    if timer == 'week':
+        table_name = 'W'
+    if timer == 'five':
+        table_name = '5'
+
+    sql ='SELECT * FROM kbars_'+table_name+'_'+stock_id+'  ;'
     print(sql)
     db = pymysql.connect('localhost','root','root','chan_stock')
     cursor = db.cursor()
