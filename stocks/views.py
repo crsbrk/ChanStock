@@ -72,7 +72,7 @@ def getStockOneMinute(stock_id,timer, stock_type):
     print(stock_type)
     sql ='SELECT * FROM kbars_'+table_name+'_'+stock_id+'_'+stock_type+'  ;'
     print(sql)
-    db = pymysql.connect('localhost','root','root','chan_stock')
+    db = pymysql.connect('localhost','django','django@1','chan_stock')
     cursor = db.cursor()
     cursor.execute(sql)
     data = cursor.fetchall()
