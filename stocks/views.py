@@ -27,7 +27,8 @@ def index(request):
 def details(request, id):
     stock = Stocks.objects.get(stock_id=id)
     
-    timer='d'
+    timer='1'
+    
     if request.method == "POST":
         timer = request.POST.get('timer')
     
@@ -69,7 +70,7 @@ def getStockOneMinute(stock_id,timer, stock_type):
     if timer == 'five':
         table_name = '5'
 
-    print(stock_type)
+    #print(stock_type)
     sql1 ='SELECT * FROM kbars_'+table_name+'_'+stock_id+'_'+stock_type+'  ORDER BY id DESC LIMIT 400'
     sql ='SELECT * FROM ('+sql1+')sub ORDER BY id ASC;'
     print(sql)
