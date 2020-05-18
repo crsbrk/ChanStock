@@ -765,7 +765,7 @@ function addPopupEvents(chart) {
 
 jQuery.support.cors = true;
 //https://data.jianshukeji.com/stock/history/000001
-Highcharts.getJSON('http://127.0.0.1:8000/media/aapl-ohlcv.json', function (data) {
+Highcharts.getJSON('/media/aapl-ohlcv.json', function (data) {
 
     data = {{ stock_k_one_json|safe }};
     
