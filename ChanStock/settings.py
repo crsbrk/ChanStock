@@ -84,8 +84,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'chan_stock',
-        'USER':'root',
-        'PASSWORD':'root',
+        'USER':'django',
+        'PASSWORD':'django@1',
         'HOST':'localhost',
         'PORT':''
     }
