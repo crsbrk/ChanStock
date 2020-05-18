@@ -578,7 +578,7 @@ li.highcharts-active {
   <button id="btn4" onclick="getWeek()">week</button>
   <button id="btn5" onclick="getMonth()">month</button>
 
-<textarea id ='ask'></textarea>
+
 <script type="text/javascript">
 		function get1(){
 
@@ -765,7 +765,7 @@ function addPopupEvents(chart) {
 
 jQuery.support.cors = true;
 //https://data.jianshukeji.com/stock/history/000001
-Highcharts.getJSON('http://localhost:8000/media/aapl-ohlcv.json', function (data) {
+Highcharts.getJSON('http://127.0.0.1:8000/media/aapl-ohlcv.json', function (data) {
 
     data = {{ stock_k_one_json|safe }};
     

@@ -1,7 +1,7 @@
 from django.db import models
 from datetime import datetime
 from django.core.validators import MaxValueValidator, MinValueValidator
-#from templates.constant_files import WORKERS_NAMES, ORDER_TYPES
+from templates.constant_files import *
 
 # Create your models here.
 
@@ -14,6 +14,7 @@ class Stocks(models.Model):
     stock_price = models.FloatField('价格', default=0)
     stock_change = models.FloatField('涨跌幅', default=0)
     stock_market_value = models.FloatField('市值', default=0)
+    stock_type = models.CharField('类型',choices=STOCK_TYPES, max_length=200,default='sz')
 
     def __str__(self):
         return self.stock_name

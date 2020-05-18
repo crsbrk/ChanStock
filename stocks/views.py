@@ -27,13 +27,13 @@ def index(request):
 def details(request, id):
     stock = Stocks.objects.get(stock_id=id)
     
-    timer='D'
+    timer='d'
     if request.method == "POST":
         timer = request.POST.get('timer')
     
     print("timer is %s",timer)
-
-    stock_k_one_data = getStockOneMinute(id, timer)
+    stock_type = stock.stock_type
+    stock_k_one_data = getStockOneMinute(id, timer, stock_type)
     json_data=json.dumps(stock_k_one_data,ensure_ascii=False)
     #print(json_data)
 
@@ -54,22 +54,23 @@ def about(request):
     return HttpResponse("缠论")
 
 
-def getStockOneMinute(stock_id,timer):
+def getStockOneMinute(stock_id,timer, stock_type):
     table_name ='1'
     if timer == 'one':
         table_name = '1'
     if timer == 'thirty':
         table_name = '30'
     if timer == 'day':
-        table_name = 'D'
+        table_name = 'd'
     if timer == 'month':
-        table_name = 'M'
+        table_name = 'm'
     if timer == 'week':
-        table_name = 'W'
+        table_name = 'w'
     if timer == 'five':
         table_name = '5'
 
-    sql ='SELECT * FROM kbars_'+table_name+'_'+stock_id+'  ;'
+    print(stock_type)
+    sql ='SELECT * FROM kbars_'+table_name+'_'+stock_id+'_'+stock_type+'  ;'
     print(sql)
     db = pymysql.connect('localhost','root','root','chan_stock')
     cursor = db.cursor()
