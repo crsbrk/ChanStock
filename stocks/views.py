@@ -70,7 +70,8 @@ def getStockOneMinute(stock_id,timer, stock_type):
         table_name = '5'
 
     print(stock_type)
-    sql ='SELECT * FROM kbars_'+table_name+'_'+stock_id+'_'+stock_type+'  ;'
+    sql1 ='SELECT * FROM kbars_'+table_name+'_'+stock_id+'_'+stock_type+'  ORDER BY id DESC LIMIT 400'
+    sql ='SELECT * FROM ('+sql1+')sub ORDER BY id ASC;'
     print(sql)
     db = pymysql.connect('localhost','django','django@1','chan_stock')
     cursor = db.cursor()
