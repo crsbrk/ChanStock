@@ -805,18 +805,22 @@ Highcharts.getJSON('/media/aapl-ohlcv.json', function (data) {
             straitBoldLine.push([data[i][0],data[i][3]]);
         }
         if (data[i][9]==2 ){
+          topArrow.push([data[i][0],data[i][2]]);
           straitLine.push([data[i][0],data[i][2]])
           straitBoldLine.push([data[i][0],data[i][2]])
         }
         if (data[i][9]==-2 ){
           straitLine.push([data[i][0],data[i][3]])
           straitBoldLine.push([data[i][0],data[i][3]])
+          bottomArrow.push([data[i][0],data[i][3]]);
         }
         if (data[i][9]==3 ){
+          topArrow.push([data[i][0],data[i][2]]);
           straitBoldLine.push([data[i][0],data[i][2]])
         }
         if (data[i][9]==-3 ){
           straitBoldLine.push([data[i][0],data[i][3]])
+          bottomArrow.push([data[i][0],data[i][3]]);
         }
         
         
