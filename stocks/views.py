@@ -28,15 +28,17 @@ def details(request, id):
     stock = Stocks.objects.get(stock_id=id)
     
     timer='1'
-    
+
     if request.method == "POST":
         timer = request.POST.get('timer')
     
     print("timer is %s",timer)
     stock_type = stock.stock_type
     stock_k_one_data = getStockOneMinute(id, timer, stock_type)
+    stock_zs_data = getStockZs(id,timer,stock_type)
     json_data=json.dumps(stock_k_one_data,ensure_ascii=False)
-    #print(json_data)
+    json_zs_data=json.dumps(stock_zs_data,ensure_ascii=False)    
+    print(json_zs_data)
 
 
 
@@ -44,6 +46,7 @@ def details(request, id):
     context = {
         'stock': stock,
         'stock_k_one_json': json_data,
+        'stock_zs_json':stock_zs_data,
         'timer':timer
 
     }
@@ -70,9 +73,63 @@ def getStockOneMinute(stock_id,timer, stock_type):
     if timer == 'five':
         table_name = '5'
 
-    #print(stock_type)
-    sql1 ='SELECT * FROM kbars_'+table_name+'_'+stock_id+'_'+stock_type+'  ORDER BY id DESC LIMIT 400'
+    stock_table_name ='kbars_'+table_name+'_'+stock_id+'_'+stock_type     
+    sql1 ='SELECT * FROM '+stock_table_name+'  ORDER BY id DESC LIMIT 1000'
     sql ='SELECT * FROM ('+sql1+')sub ORDER BY id ASC;'
+
+    symbol_name = stock_id+'.'+stock_type.upper()
+    resol_name = table_name.upper()
+    print(resol_name)
+    print(resol_name)
+
+    sql_zs = '''selecct fromts, tots, zd, zg from tbzs where symbol= '%s' and resol='%s' ORDER BY id DESC LIMIT 1000'''%(symbol_name,resol_name)
+    print(sql)
+    print(sql_zs)
+
+    db = pymysql.connect('localhost','django','django@1','chan_stock')
+    cursor = db.cursor()
+    cursor.execute(sql)
+    data = cursor.fetchall()
+
+    list_all = []
+
+    for row in data:
+        list_one = []
+        for r in row:
+            list_one.append(r)
+        list_all.append(list_one)
+
+    db.close()
+
+    return list_all
+
+def getStockZs(stock_id,timer, stock_type):
+    table_name ='1'
+    if timer == 'one':
+        table_name = '1'
+    if timer == 'thirty':
+        table_name = '30'
+    if timer == 'day':
+        table_name = 'D'
+    if timer == 'month':
+        table_name = 'M'
+    if timer == 'week':
+        table_name = 'W'
+    if timer == 'five':
+        table_name = '5'
+
+    stock_table_name ='kbars_'+table_name+'_'+stock_id+'_'+stock_type     
+
+
+    symbol_name = stock_id+'.'+stock_type.upper()
+    resol_name = table_name.upper()
+    print(symbol_name)
+    print(resol_name)
+
+    sql_zs = '''SELECT fromts, tots, zd, zg from tbzs where symbol= '%s' and resol='%s' ORDER BY fromts DESC LIMIT 1000'''%(symbol_name,resol_name)
+    
+
+    sql ='SELECT * FROM ('+sql_zs+')sub ORDER BY fromts ASC;'
     print(sql)
     db = pymysql.connect('localhost','django','django@1','chan_stock')
     cursor = db.cursor()
@@ -90,3 +147,5 @@ def getStockOneMinute(stock_id,timer, stock_type):
     db.close()
 
     return list_all
+
+        

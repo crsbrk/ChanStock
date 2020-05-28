@@ -6,7 +6,7 @@
 
 
 <!DOCTYPE HTML>
-<html>
+<html id='myhtml'>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -305,7 +305,7 @@ li.highcharts-active {
 
 		</style>
 	</head>
-	<body>
+	<body >
 <link rel="stylesheet" type="text/css" href="https://code.highcharts.com/css/annotations/popup.css">
 
 <script src="{% static 'js/highstock.js' %} "></script>   
@@ -570,27 +570,41 @@ li.highcharts-active {
       </ul>
     </div>
   </div>
-
+<!-- 
   <button id="btn1" onclick="get1()">1min</button>  
   <button id="btn6" onclick="get5()">5min</button>  
   <button id="btn2" onclick="get30()">30min</button>  
   <button id="btn3" onclick="getDay()">day</button>  
   <button id="btn4" onclick="getWeek()">week</button>
-  <button id="btn5" onclick="getMonth()">month</button>
+  <button id="btn5" onclick="getMonth()">month</button> -->
+
+<form action=/stocks/details/{{stock.stock_id}}/ method="post">
+  <select name="timer">
+    <option value="one">1 min</option>
+    <option value="five">5 mins</option>
+    <option value='thirty'>30 mins</option>
+    <option value='day'>Day</option>
+    <option value='week'>Week</option>
+    <option value='month'>Month</option>
+</select>
+  <input type="submit" value="Submit" />
+</form>
 
 
 <script type="text/javascript">
+
 		function get1(){
 
       $.ajax({
         type:"POST",
         url:"", 		
         data:{timer:'one'},
-        success:function(result){$("#ask").val(result);}
-});
-$('#container').highcharts().redraw();
+        success:function(result){
 
-    }
+      }
+});
+
+}
 
 
     function get5(){
@@ -599,12 +613,23 @@ $('#container').highcharts().redraw();
         type:"POST",
         url:"", 		
         data:{timer:'five'},
+        dataType:"html",//返回整合HTML
+        
         success:function(result){
-          $("#allBody").html(result);//刷新整个body页面的html
-
+          console.log('success')
+          $("#myhtml").html(result);//刷新整个body页面的html
+          console.log(result)
+          console.log('inside timer:{{timer}}')
+         
+         
+          
         }
+      
 });
-console.log('{{timer}}')
+
+console.log('outsid timer:{{timer}}')
+
+
 
 
 
@@ -768,7 +793,7 @@ jQuery.support.cors = true;
 Highcharts.getJSON('/media/aapl-ohlcv.json', function (data) {
 
     data = {{ stock_k_one_json|safe }};
-    
+    var zs_data ={{stock_zs_json|safe}};
 
     // split the data set into ohlc and volume
     var ohlc = [],
@@ -779,6 +804,7 @@ Highcharts.getJSON('/media/aapl-ohlcv.json', function (data) {
         straitBoldLine = [],
         dataLength = data.length,
         i = 0;
+    
 
     for (i; i < dataLength; i += 1) {
         ohlc.push([
@@ -796,41 +822,44 @@ Highcharts.getJSON('/media/aapl-ohlcv.json', function (data) {
 
         if(data[i][9] == 1){
             topArrow.push([data[i][0],data[i][2]]);
-            straitLine.push([data[i][0],data[i][2]]);
-            straitBoldLine.push([data[i][0],data[i][2]]);
+           
         } 
         if (data[i][9] == -1){
-            bottomArrow.push([data[i][0],data[i][3]]);
-            straitLine.push([data[i][0],data[i][3]]);
-            straitBoldLine.push([data[i][0],data[i][3]]);
+            bottomArrow.push([data[i][0],data[i][3]]);    
+            
         }
         if (data[i][9]==2 ){
           topArrow.push([data[i][0],data[i][2]]);
-          straitLine.push([data[i][0],data[i][2]])
-          straitBoldLine.push([data[i][0],data[i][2]])
+          straitLine.push([data[i][0],data[i][2]]);
+         
         }
         if (data[i][9]==-2 ){
-          straitLine.push([data[i][0],data[i][3]])
-          straitBoldLine.push([data[i][0],data[i][3]])
+          straitLine.push([data[i][0],data[i][3]]);
           bottomArrow.push([data[i][0],data[i][3]]);
         }
         if (data[i][9]==3 ){
           topArrow.push([data[i][0],data[i][2]]);
-          straitBoldLine.push([data[i][0],data[i][2]])
+          straitLine.push([data[i][0],data[i][2]]);
+          straitBoldLine.push([data[i][0],data[i][2]]);
         }
         if (data[i][9]==-3 ){
-          straitBoldLine.push([data[i][0],data[i][3]])
+          straitBoldLine.push([data[i][0],data[i][3]]);
+          straitLine.push([data[i][0],data[i][3]]);
           bottomArrow.push([data[i][0],data[i][3]]);
         }
-        
-        
-       /* straitLine.push([
-            data[i][0],
-            data[i][9] // the flag for drawing lines 
-        ]);*/
-    }
 
-    Highcharts.stockChart('container', {
+    }//end for
+
+    var ranges = [
+    [1246406400000, 14.3, 27.7],
+    [1246492800000, 14.5, 27.8],
+    [1246579200000, 15.5, 29.6]
+
+  ];
+
+print(ranges)
+
+var stock_chart = Highcharts.stockChart('container', {
         chart: {
             events: {
                 load: function () {
@@ -953,6 +982,7 @@ Highcharts.getJSON('/media/aapl-ohlcv.json', function (data) {
           data: straitBoldLine,
           lineWidth: 4,
         }],
+
         responsive: {
             rules: [{
                 condition: {
@@ -968,7 +998,22 @@ Highcharts.getJSON('/media/aapl-ohlcv.json', function (data) {
     });
 });
 
-        </script>
+stock_chart.addSeries({
+  name: '范围',
+  data: ranges,
+  type: 'arearange',
+  lineWidth: 0,
+  linkedTo: ':previous', // 与上一个数据列进行关联，或者直接赋值 0
+  color: Highcharts.getOptions().colors[0],
+  fillOpacity: 0.3,
+  zIndex: 0,
+  marker: {
+    enabled: false
+  }
+}); 
+
+
+</script>
         
 
 
