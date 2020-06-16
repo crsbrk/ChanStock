@@ -308,7 +308,13 @@ li.highcharts-active {
 	<body >
 <link rel="stylesheet" type="text/css" href="https://code.highcharts.com/css/annotations/popup.css">
 
-<script src="{% static 'js/highstock.js' %} "></script>   
+<!-- <script src="{% static 'js/highstock.js' %} "></script>    -->
+
+
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
+<script src="https://code.highcharts.com/stock/highcharts-more.js"></script>
+
+
 <script src="{% static 'js/modules/data.js' %} "></script>  
 <script src="{% static 'js/modules/drag-panes.js' %} "></script>  
 <script src="{% static 'js/modules/annotations-advanced.js' %} "></script>  
@@ -320,6 +326,11 @@ li.highcharts-active {
 <script src="{% static 'js/indicators/indicators.js' %} "></script>  
 <script src="{% static 'js/indicators/bollinger-bands.js' %} "></script>  
 <script src="{% static 'js/indicators/ema.js' %} "></script>  
+
+
+
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="http://cdn.hcharts.cn/highcharts-plugins/highcharts-zh_CN.js"></script>
 
 
 
@@ -805,10 +816,16 @@ Highcharts.getJSON('/media/aapl-ohlcv.json', function (data) {
         dataLength = data.length,
         i = 0;
     
+    var ranges = [
+        [1586485560, 12.3, 12.99],
+        [1586485620, 12.5, 12.88],
+        [1587485680, 12.5, 12.88]
+    
+      ];
 
     for (i; i < dataLength; i += 1) {
         ohlc.push([
-            data[i][0], // the date
+            data[i][0]*1000, // the date
             data[i][1], // open
             data[i][2], // high
             data[i][3], // low
@@ -816,46 +833,41 @@ Highcharts.getJSON('/media/aapl-ohlcv.json', function (data) {
         ]);
 
         volume.push([
-            data[i][0], // the date
+            data[i][0]*1000, // the date
             data[i][6] // the volume
         ]);
 
         if(data[i][9] == 1){
-            topArrow.push([data[i][0],data[i][2]]);
+            topArrow.push([data[i][0]*1000,data[i][2]]);
            
         } 
         if (data[i][9] == -1){
-            bottomArrow.push([data[i][0],data[i][3]]);    
+            bottomArrow.push([data[i][0]*1000,data[i][3]]);    
             
         }
         if (data[i][9]==2 ){
-          topArrow.push([data[i][0],data[i][2]]);
-          straitLine.push([data[i][0],data[i][2]]);
+          topArrow.push([data[i][0]*1000,data[i][2]]);
+          straitLine.push([data[i][0]*1000,data[i][2]]);
          
         }
         if (data[i][9]==-2 ){
-          straitLine.push([data[i][0],data[i][3]]);
-          bottomArrow.push([data[i][0],data[i][3]]);
+          straitLine.push([data[i][0]*1000,data[i][3]]);
+          bottomArrow.push([data[i][0]*1000,data[i][3]]);
         }
         if (data[i][9]==3 ){
-          topArrow.push([data[i][0],data[i][2]]);
-          straitLine.push([data[i][0],data[i][2]]);
-          straitBoldLine.push([data[i][0],data[i][2]]);
+          topArrow.push([data[i][0]*1000,data[i][2]]);
+          straitLine.push([data[i][0]*1000,data[i][2]]);
+          straitBoldLine.push([data[i][0]*1000,data[i][2]]);
         }
         if (data[i][9]==-3 ){
-          straitBoldLine.push([data[i][0],data[i][3]]);
-          straitLine.push([data[i][0],data[i][3]]);
-          bottomArrow.push([data[i][0],data[i][3]]);
+          straitBoldLine.push([data[i][0]*1000,data[i][3]]);
+          straitLine.push([data[i][0]*1000,data[i][3]]);
+          bottomArrow.push([data[i][0]*1000,data[i][3]]);
         }
 
     }//end for
 
-    var ranges = [
-    [1246406400000, 14.3, 27.7],
-    [1246492800000, 14.5, 27.8],
-    [1246579200000, 15.5, 29.6]
-
-  ];
+ 
 
 
 
@@ -981,7 +993,22 @@ var stock_chart = Highcharts.stockChart('container', {
           name: '段结构',
           data: straitBoldLine,
           lineWidth: 4,
-        }],
+        }, {
+          name: '范围',
+          data: ranges,
+          type: 'arearange',
+          lineWidth: 0,
+          linkedTo: ':previous', // 与上一个数据列进行关联，或者直接赋值 0
+          color: Highcharts.getOptions().colors[0],
+          fillOpacity: 0.3,
+          zIndex: 0,
+          marker: {
+            enabled: false
+          }
+        }
+        
+        
+        ],
 
         responsive: {
             rules: [{
@@ -997,7 +1024,7 @@ var stock_chart = Highcharts.stockChart('container', {
         }
     });
 });
-
+/*
 stock_chart.addSeries({
   name: '范围',
   data: ranges,
@@ -1010,7 +1037,7 @@ stock_chart.addSeries({
   marker: {
     enabled: false
   }
-});
+}); */
 
 
 </script>
