@@ -325,7 +325,7 @@ li.highcharts-active {
 
 <script src="{% static 'js/indicators/indicators.js' %} "></script>  
 <script src="{% static 'js/indicators/bollinger-bands.js' %} "></script>  
-<script src="{% static 'js/indicators/ema.js' %} "></script>  
+<script src="{% static 'js/indicators/ema.js' %} "></script>   
 
 
 
@@ -688,6 +688,7 @@ $('#container').highcharts().redraw();
 	</script>
 
 
+
   <div id="container" class="chart"></div>
 </div>
 
@@ -867,12 +868,14 @@ Highcharts.getJSON('/media/aapl-ohlcv.json', function (data) {
 
     }//end for
 
- 
+
+ Highcharts.setOptions({ global: { useUTC: false } }); 
 
 
 
 var stock_chart = Highcharts.stockChart('container', {
-        chart: {
+    
+  chart: {
             events: {
                 load: function () {
                     addPopupEvents(this);
@@ -954,8 +957,13 @@ var stock_chart = Highcharts.stockChart('container', {
                 enabled: false
             }
         },
-        series: [{
-            type: 'ohlc',
+        series: [
+
+        {        
+          dataGrouping: {
+          enabled: false
+        },
+            type: 'candlestick',
             id: 'pingan-ohlc',
             name: '{{stock.stock_name}}价格',
             data: ohlc
