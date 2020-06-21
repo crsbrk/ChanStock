@@ -328,7 +328,7 @@ li.highcharts-active {
 <script src="{% static 'js/indicators/ema.js' %} "></script>   
 
 
-
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 <script src="https://code.highcharts.com/highcharts-more.js"></script>
 <script src="http://cdn.hcharts.cn/highcharts-plugins/highcharts-zh_CN.js"></script>
 
@@ -869,8 +869,10 @@ Highcharts.getJSON('/media/aapl-ohlcv.json', function (data) {
     }//end for
 
 
- Highcharts.setOptions({ global: { useUTC: false } }); 
-
+Highcharts.setOptions({ 
+  global: { useUTC: false },
+  credits:{enabled:false} 
+}); 
 
 
 var stock_chart = Highcharts.stockChart('container', {
@@ -957,6 +959,27 @@ var stock_chart = Highcharts.stockChart('container', {
                 enabled: false
             }
         },
+        tooltip: {
+          split: false,
+          shared: true
+        },
+        plotOptions: {
+          scatter: {
+            tooltip: {
+              pointFormatter:function(){
+                return this.y
+              }
+              
+            }
+          },
+          series:{
+            showInLegend: true,
+
+          }
+        },
+        legend: {
+          enabled: true
+        },
         series: [
 
         {        
@@ -965,8 +988,17 @@ var stock_chart = Highcharts.stockChart('container', {
         },
             type: 'candlestick',
             id: 'pingan-ohlc',
+            color: 'green',
+            lineColor: 'green',
+            upColor: 'red',
+            upLineColor: 'red',
             name: '{{stock.stock_name}}价格',
-            data: ohlc
+            navigatorOptions: {
+              color: Highcharts.getOptions().colors[0]
+            },
+            data: ohlc,
+
+            
         }, {
             type: 'column',
             id: 'pingan-volume',
@@ -978,19 +1010,24 @@ var stock_chart = Highcharts.stockChart('container', {
           name: '顶',
           data: topArrow,
           color:'#FF0000',
+          
           marker: {
             radius: 4,
             symbol: 'triangle-down'
-          }
+          }         
+
           
         },{
           type: 'scatter',
+        
           name: '底',
-          data: bottomArrow,
+          
           marker: {
             radius: 4,
             symbol: 'triangle'
-          }
+          },
+          data: bottomArrow
+ 
         },{
           type: 'line',
           name: '笔结构',
