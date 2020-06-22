@@ -588,6 +588,7 @@ li.highcharts-active {
   <button id="btn3" onclick="getDay()">day</button>  
   <button id="btn4" onclick="getWeek()">week</button>
   <button id="btn5" onclick="getMonth()">month</button> -->
+  <button id="button" >add button</button>  
 
 <form action=/stocks/details/{{stock.stock_id}}/ method="post">
   <select name="timer">
@@ -801,12 +802,15 @@ function addPopupEvents(chart) {
 }
 
 jQuery.support.cors = true;
+zs_ranges = new Array();
 //https://data.jianshukeji.com/stock/history/000001
 Highcharts.getJSON('/media/aapl-ohlcv.json', function (data) {
 
     data = {{ stock_k_one_json|safe }};
     var zs_data ={{stock_zs_json|safe}};
 
+    
+    //console.log('zs_data:'+zs_data);
     // split the data set into ohlc and volume
     var ohlc = [],
         volume = [],
@@ -816,11 +820,30 @@ Highcharts.getJSON('/media/aapl-ohlcv.json', function (data) {
         straitBoldLine = [],
         dataLength = data.length,
         i = 0;
-    
+
+    var zsLength = zs_data.length,
+        j = 0,
+        //zs_ranges = new Array(),
+        zs_range1= [],
+        zs_range2= [];
+
+
+    for (j;j < zsLength; j += 1){
+     zs_range1.push( zs_data[j][0]*1000,zs_data[j][2],zs_data[j][3])
+     zs_range2.push(zs_data[j][1]*1000,zs_data[j][2],zs_data[j][3]);
+     zs_ranges.push([zs_range1,zs_range2]);
+     console.log(zs_range1)
+     console.log(zs_range2)
+     zs_range1=[];
+     zs_range2=[];
+    }
+    console.log('zs_ranges:');
+    console.log(zs_ranges);
+    //console.log(JSON.stringify(zs_ranges[1]));
     var ranges = [
-        [1586485560, 12.3, 12.99],
-        [1586485620, 12.5, 12.88],
-        [1587485680, 12.5, 12.88]
+        [1586485560000, 12.3, 12.99],
+        [1586485620000, 12.5, 12.88],
+        [1587485680000, 12.5, 12.88]
     
       ];
 
@@ -867,7 +890,7 @@ Highcharts.getJSON('/media/aapl-ohlcv.json', function (data) {
         }
 
     }//end for
-
+    //console.log(JSON.stringify(bottomArrow));
 
 Highcharts.setOptions({ 
   global: { useUTC: false },
@@ -875,9 +898,12 @@ Highcharts.setOptions({
 }); 
 
 
-var stock_chart = Highcharts.stockChart('container', {
+//highchart container
+
+ var stock_chart = Highcharts.stockChart('container', {
     
   chart: {
+            renderTo: 'chart-area',
             events: {
                 load: function () {
                     addPopupEvents(this);
@@ -1039,13 +1065,13 @@ var stock_chart = Highcharts.stockChart('container', {
           data: straitBoldLine,
           lineWidth: 4,
         }, {
-          name: '范围',
-          data: ranges,
+          name: '中枢',
+          data: zs_ranges[0],
           type: 'arearange',
           lineWidth: 0,
-          linkedTo: ':previous', // 与上一个数据列进行关联，或者直接赋值 0
+          linkedTo: 'pingan-ohlc', // 与上一个数据列进行关联，或者直接赋值 0
           color: Highcharts.getOptions().colors[0],
-          fillOpacity: 0.3,
+          fillOpacity: 0.5,
           zIndex: 0,
           marker: {
             enabled: false
@@ -1068,22 +1094,44 @@ var stock_chart = Highcharts.stockChart('container', {
             }]
         }
     });
+}
+
+
+);
+
+
+
+$('#button').click(addAreaRange);
+function addAreaRange(stock_chart){
+  console.log("in add area range function");
+  stock_chart.addSeries({
+    name: 'ADBE',
+    data: [ [1586485560000, 12.3],[1586485620000, 12.5],[1587485680000, 12.5]]
 });
-/*
-stock_chart.addSeries({
-  name: '范围',
-  data: ranges,
+
+  stock_chart.addSeries({
+  name: '范围2',
+  data: zs_ranges[1],
   type: 'arearange',
   lineWidth: 0,
-  linkedTo: ':previous', // 与上一个数据列进行关联，或者直接赋值 0
+  //linkedTo: ':previous', // 与上一个数据列进行关联，或者直接赋值 0
   color: Highcharts.getOptions().colors[0],
   fillOpacity: 0.3,
   zIndex: 0,
   marker: {
     enabled: false
   }
-}); */
+}); 
+$(this).attr('disabled', true);
+}
 
+
+var chart = $('#chart-area').highstock();
+  chart.addSeries({
+          name: 'test',
+          data: [ [1586485560000, 12.3],[1586485620000, 12.5],[1587485680000, 12.5]]
+    });
+  chart.redraw();
 
 </script>
         
