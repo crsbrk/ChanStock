@@ -11,7 +11,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta http-equiv="Access-Control-Allow-Origin" content="*" />
-		<title>Highstock Example</title>
+		<title>{{stock.stock_name}}-{{stock.stock_type}}</title>
 
 		<style type="text/css">
 /* FULL SCREEN */
@@ -330,6 +330,7 @@ li.highcharts-active {
 
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 <script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
 <script src="http://cdn.hcharts.cn/highcharts-plugins/highcharts-zh_CN.js"></script>
 
 
@@ -736,6 +737,7 @@ function addPopupEvents(chart) {
                 }
             });
 
+            
             chart.stockToolbar.indicatorsPopupContainer.style.display = 'none';
         }
     );
@@ -902,7 +904,7 @@ Highcharts.setOptions({
 
  var stock_chart = Highcharts.stockChart('container', {
     
-  chart: {
+        chart: {
             renderTo: 'chart-area',
             events: {
                 load: function () {
@@ -1064,19 +1066,7 @@ Highcharts.setOptions({
           name: '段结构',
           data: straitBoldLine,
           lineWidth: 4,
-        }, {
-          name: '中枢',
-          data: zs_ranges[0],
-          type: 'arearange',
-          lineWidth: 0,
-          linkedTo: 'pingan-ohlc', // 与上一个数据列进行关联，或者直接赋值 0
-          color: Highcharts.getOptions().colors[0],
-          fillOpacity: 0.5,
-          zIndex: 0,
-          marker: {
-            enabled: false
-          }
-        }
+        }, 
         
         
         ],
@@ -1094,44 +1084,56 @@ Highcharts.setOptions({
             }]
         }
     });
-}
+
+    for (i in zs_ranges){
+      console.log(i);
+      stock_chart.addSeries({
+        showInLegend: false,
+        data: zs_ranges[i],
+        type: 'arearange',
+        lineWidth: 0,
+        linkedTo: 'pingan-ohlc', // 与上一个数据列进行关联，或者直接赋值 0
+        color: Highcharts.getOptions().colors[0],
+        fillOpacity: 0.5,
+        zIndex: 0,
+        marker: {
+          enabled: false
+        }
+      }); 
+    }
+
+   
+/*
+    stock_chart.addSeries({
+      name: 'test',
+      data: [ [1586485560000, 12.3],[1586485620000, 12.5],[1587485680000, 12.5]]
+  });
+  */  
+
+} 
 
 
 );
 
 
 
-$('#button').click(addAreaRange);
+
+
+$('#button').click(addAreaRange(stock_chart));
+
 function addAreaRange(stock_chart){
   console.log("in add area range function");
   stock_chart.addSeries({
     name: 'ADBE',
-    data: [ [1586485560000, 12.3],[1586485620000, 12.5],[1587485680000, 12.5]]
+    data: [ [1586485560000, 12.3,15],[1586485620000, 12.5,19],[1587485680000, 12.5,30]]
 });
-
-  stock_chart.addSeries({
-  name: '范围2',
-  data: zs_ranges[1],
-  type: 'arearange',
-  lineWidth: 0,
-  //linkedTo: ':previous', // 与上一个数据列进行关联，或者直接赋值 0
-  color: Highcharts.getOptions().colors[0],
-  fillOpacity: 0.3,
-  zIndex: 0,
-  marker: {
-    enabled: false
-  }
-}); 
-$(this).attr('disabled', true);
 }
+  
 
 
-var chart = $('#chart-area').highstock();
-  chart.addSeries({
-          name: 'test',
-          data: [ [1586485560000, 12.3],[1586485620000, 12.5],[1587485680000, 12.5]]
-    });
-  chart.redraw();
+//var chart = $('#chart-area').highstock();
+
+ // chart.redraw();
 
 </script>
         
