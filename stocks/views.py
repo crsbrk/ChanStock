@@ -36,9 +36,12 @@ def details(request, id):
     stock_type = stock.stock_type
     stock_k_one_data = getStockOneMinute(id, timer, stock_type)
     stock_zs_data = getStockZs(id,timer,stock_type)
+    stock_buysell_data = getStockBuySell(id,timer,stock_type)
+
     json_data=json.dumps(stock_k_one_data,ensure_ascii=False)
-    json_zs_data=json.dumps(stock_zs_data,ensure_ascii=False)    
-    print(json_zs_data)
+    json_zs_data=json.dumps(stock_zs_data,ensure_ascii=False)
+    json_buysell_data=json.dumps(stock_buysell_data,ensure_ascii=False)    
+    print(json_buysell_data)
 
 
 
@@ -47,6 +50,7 @@ def details(request, id):
         'stock': stock,
         'stock_k_one_json': json_data,
         'stock_zs_json':stock_zs_data,
+        'stock_buysell_json':stock_buysell_data,
         'timer':timer
 
     }
@@ -149,3 +153,47 @@ def getStockZs(stock_id,timer, stock_type):
     return list_all
 
         
+def getStockBuySell(stock_id,timer, stock_type):
+    table_name ='1'
+    if timer == 'one':
+        table_name = '1'
+    if timer == 'thirty':
+        table_name = '30'
+    if timer == 'day':
+        table_name = 'D'
+    if timer == 'month':
+        table_name = 'M'
+    if timer == 'week':
+        table_name = 'W'
+    if timer == 'five':
+        table_name = '5'
+
+    stock_table_name = 'buysell' 
+
+
+    symbol_name = stock_id+'.'+stock_type.upper()
+    resol_name = table_name.upper()
+    print(symbol_name)
+    print(resol_name)
+
+    sql_buysell = '''SELECT pdate, price, ptype  from buysell where symbol= '%s' and resol='%s' ORDER BY fromts DESC LIMIT 1000'''%(symbol_name,resol_name)
+    
+
+    sql ='SELECT * FROM ('+sql_buysell+')sub ORDER BY pdate ASC;'
+    print(sql)
+    db = pymysql.connect('localhost','django','django@1','chan_stock')
+    cursor = db.cursor()
+    cursor.execute(sql)
+    data = cursor.fetchall()
+
+    list_all = []
+
+    for row in data:
+        list_one = []
+        for r in row:
+            list_one.append(r)
+        list_all.append(list_one)
+
+    db.close()
+
+    return list_all

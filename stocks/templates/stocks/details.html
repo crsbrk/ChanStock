@@ -810,6 +810,7 @@ Highcharts.getJSON('/media/aapl-ohlcv.json', function (data) {
 
     data = {{ stock_k_one_json|safe }};
     var zs_data ={{stock_zs_json|safe}};
+    var buysell_data = {{stock_buysell_json|safe}};
 
     
     //console.log('zs_data:'+zs_data);
@@ -828,6 +829,10 @@ Highcharts.getJSON('/media/aapl-ohlcv.json', function (data) {
         //zs_ranges = new Array(),
         zs_range1= [],
         zs_range2= [];
+
+    var buysellLength = buysell_data.length,
+        buysellPoint =[];
+
 
 
     for (j;j < zsLength; j += 1){
@@ -892,6 +897,8 @@ Highcharts.getJSON('/media/aapl-ohlcv.json', function (data) {
         }
 
     }//end for
+
+
     //console.log(JSON.stringify(bottomArrow));
 
 Highcharts.setOptions({ 
@@ -1013,7 +1020,7 @@ Highcharts.setOptions({
           enabled: true
         },
         series: [
-
+       
         {        
           dataGrouping: {
           enabled: false
@@ -1071,8 +1078,7 @@ Highcharts.setOptions({
           data: straitBoldLine,
           lineWidth: 4,
         }, 
-        
-        
+
         ],
 
         responsive: {
@@ -1093,6 +1099,7 @@ Highcharts.setOptions({
       console.log(i);
       stock_chart.addSeries({
         showInLegend: false,
+        name:'中枢',
         data: zs_ranges[i],
         type: 'arearange',
         lineWidth: 0,
@@ -1103,11 +1110,56 @@ Highcharts.setOptions({
         marker: {
           enabled: false
         }
-      }); 
+      },false);
     }
 
-   
 
+    for (j in buysell_data){
+      if (buysell_data[i][2].indexOf('sell')!=-1){
+        console.log('in buysell postion');
+        stock_chart.addSeries(
+        {
+          type: 'flags',
+          showInLegend: false,
+          data: [{
+              x: [buysell_data[i][0]*1000], 
+              title: ''+buysell_data[i][2],   
+              text: 'price:'+buysell_data[i][1]
+          }],
+          onSeries: 'pingan-ohlc',
+          color: 'white',
+          //fillColor: '#000000',
+          shape: 'squarepin',
+          width: 16,
+          style: { // text style
+            color: 'red'
+        },
+        },false
+      );}
+      else{
+        stock_chart.addSeries(
+        {
+          type: 'flags',
+          showInLegend: false,
+          data: [{
+              x: [buysell_data[i][0]*1000], 
+              title: ''+buysell_data[i][2],   
+              text: 'price:'+buysell_data[i][1]
+          }],
+          onSeries: 'pingan-ohlc',
+          color: 'white',
+          //fillColor: 'blue',
+          shape: 'squarepin',
+          width: 16,
+          style: { // text style
+            color: 'green'
+            },
+        },false
+      );
+      }
+    }
+   
+    stock_chart.redraw(); 
 
 } 
 
