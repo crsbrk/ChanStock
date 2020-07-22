@@ -832,7 +832,9 @@ Highcharts.getJSON('/media/aapl-ohlcv.json', function (data) {
 
     var buysellLength = buysell_data.length,
         buysellPoint =[];
-
+    for(i;i<buysellLength;i+=1){
+      buysellPoint.push([buysell_data[i][0]*1000,buysell_data[i][1],buysell_data[i][2]])
+    }
 
 
     for (j;j < zsLength; j += 1){
@@ -1112,19 +1114,21 @@ Highcharts.setOptions({
         }
       },false);
     }
-
-
-    for (j in buysell_data){
-      if (buysell_data[i][2].indexOf('sell')!=-1){
+/*
+    console.log(typeof(buysellPoint));
+  if (buysellPoint != null && typeof(buysellPoint)!="undefined" && Object.keys(buysellPoint).length != 0){
+    for (i in buysellPoint){
+      console.log(i);
+      if (buysellPoint[i][2].indexOf('sell')!=-1){
         console.log('in buysell postion');
         stock_chart.addSeries(
         {
           type: 'flags',
           showInLegend: false,
           data: [{
-              x: [buysell_data[i][0]*1000], 
-              title: ''+buysell_data[i][2],   
-              text: 'price:'+buysell_data[i][1]
+              x: [buysellPoint[i][0]], 
+              title: ''+buysellPoint[i][2],   
+              text: 'price:'+buysellPoint[i][1]
           }],
           onSeries: 'pingan-ohlc',
           color: 'white',
@@ -1142,9 +1146,9 @@ Highcharts.setOptions({
           type: 'flags',
           showInLegend: false,
           data: [{
-              x: [buysell_data[i][0]*1000], 
-              title: ''+buysell_data[i][2],   
-              text: 'price:'+buysell_data[i][1]
+              x: [buysellPoint[i][0]], 
+              title: ''+buysellPoint[i][2],   
+              text: 'price:'+buysellPoint[i][1]
           }],
           onSeries: 'pingan-ohlc',
           color: 'white',
@@ -1158,7 +1162,7 @@ Highcharts.setOptions({
       );
       }
     }
-   
+  }*/
     stock_chart.redraw(); 
 
 } 

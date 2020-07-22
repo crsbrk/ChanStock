@@ -176,7 +176,7 @@ def getStockBuySell(stock_id,timer, stock_type):
     print(symbol_name)
     print(resol_name)
 
-    sql_buysell = '''SELECT pdate, price, ptype  from buysell where symbol= '%s' and resol='%s' ORDER BY fromts DESC LIMIT 1000'''%(symbol_name,resol_name)
+    sql_buysell = '''SELECT pdate, price, ptype  from buysell where symbol= '%s' and resol='%s' ORDER BY fromts DESC LIMIT 10'''%(symbol_name,resol_name)
     
 
     sql ='SELECT * FROM ('+sql_buysell+')sub ORDER BY pdate ASC;'
